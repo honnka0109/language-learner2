@@ -1,0 +1,136 @@
+[build]
+  # 빌드 명령어 (정적 사이트이므로 필요 없음)
+  # command = ""
+  
+  # 배포할 폴더
+  publish = "."
+  
+  # Node.js 버전 (필요시)
+  # NODE_VERSION = "18"
+
+[build.environment]
+  # 환경 변수 설정
+  NODE_ENV = "production"
+
+# 헤더 설정
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+
+# 오디오 파일 캐시 설정
+[[headers]]
+  for = "/audio/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+    Access-Control-Allow-Origin = "*"
+
+# PWA 매니페스트 파일
+[[headers]]
+  for = "/manifest.json"
+  [headers.values]
+    Content-Type = "application/manifest+json"
+    Cache-Control = "public, max-age=0"
+
+# Service Worker
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0"
+    Service-Worker-Allowed = "/"
+
+# HTML 파일 캐시 설정
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# 리다이렉트 설정
+[[redirects]]
+  from = "/"
+  to = "/scene1.html"
+  status = 200
+
+# 404 처리
+[[redirects]]
+  from = "/404"
+  to = "/scene1.html"
+  status = 404
+
+# HTTPS 강제
+[[redirects]]
+  from = "http://language-learner.netlify.app/*"
+  to = "https://language-learner.netlify.app/:splat"
+  status = 301
+  force = true
+
+# 폼 처리 (필요시 피드백 수집용)
+# [[redirects]]
+#   from = "/feedback"
+#   to = "/.netlify/functions/feedback"
+#   status = 200
+
+# Edge Functions 설정 (필요시)
+# [[edge_functions]]
+#   function = "geolocation"
+#   path = "/api/location"
+
+# 플러그인 설정 (필요시)
+# [[plugins]]
+#   package = "@netlify/plugin-sitemap"
+
+# 빌드 훅 설정 (필요시)
+# [build.processing]
+#   skip_processing = false
+# [build.processing.css]
+#   bundle = true
+#   minify = true
+# [build.processing.js]
+#   bundle = true
+#   minify = true
+# [build.processing.html]
+#   pretty_urls = true
+# [build.processing.images]
+#   compress = true
+
+# 분석 도구 설정 (필요시)
+# [template.environment]
+#   GOOGLE_ANALYTICS_ID = "GA_MEASUREMENT_ID"
+
+# 보안 설정
+[context.production.environment]
+  HUGO_ENV = "production"
+  HUGO_ENABLEGITINFO = "true"
+
+[context.deploy-preview.environment]
+  HUGO_VERSION = "0.119.0"
+
+[context.branch-deploy.environment]
+  HUGO_VERSION = "0.119.0"
+
+# 함수 설정 (필요시)
+# [functions]
+#   directory = "functions"
+#   node_bundler = "esbuild"
+
+# 대역폭 최적화
+[build.processing]
+  skip_processing = false
+
+[build.processing.css]
+  bundle = false
+  minify = true
+
+[build.processing.js]
+  bundle = false
+  minify = true
+
+[build.processing.html]
+  pretty_urls = false
+
+[build.processing.images]
+  compress = true

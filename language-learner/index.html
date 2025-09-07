@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="format-detection" content="telephone=no">
+    <title>NFC 언어 학습기</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#ff7043">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #5d4037;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 25px;
+            padding: 40px 30px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 60px;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #d84315;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(216, 67, 21, 0.1);
+        }
+
+        .description {
+            font-size: 16px;
+            color: #8d6e63;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .scene-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .scene-card {
+            background: rgba(255, 245, 238, 0.8);
+            border: 2px solid rgba(255, 193, 158, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .scene-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-color: #ff7043;
+        }
+
+        .scene-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ff7043;
+            margin-bottom: 8px;
+        }
+
+        .scene-title {
+            font-size: 14px;
+            color: #8d6e63;
+        }
+
+        .instructions {
+            background: rgba(76, 175, 80, 0.1);
+            border: 2px solid rgba(76, 175, 80, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .instructions h3 {
+            color: #388e3c;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .instructions ol {
+            text-align: left;
+            color: #4caf50;
+            line-height: 1.6;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+        }
+
+        .nfc-info {
+            background: rgba(33, 150, 243, 0.1);
+            border: 2px solid rgba(33, 150, 243, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .nfc-info h3 {
+            color: #1976d2;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .nfc-info p {
+            color: #2196f3;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .install-prompt {
+            background: rgba(156, 39, 176, 0.1);
+            border: 2px solid rgba(156, 39, 176, 0.2);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .install-btn {
+            background: linear-gradient(135deg, #9c27b0, #7b1fa2);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .install-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(156, 39, 176, 0.3);
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            .logo {
+                font-size: 50px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .scene-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .scene-card {
+                padding: 15px;
+            }
+
+            .scene-number {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🎧📱</div>
+        <h1>NFC 언어 학습기</h1>
+        <p class="description">
+            NFC 태그를 스캔하여 각 씬의 언어 학습을 시작하세요!<br>
+            음성을 듣고, 녹음하고, 반복 학습할 수 있습니다.
+        </p>
+
+        <div class="scene-grid">
+            <a href="/scene1.html" class="scene-card">
+                <div class="scene-number">1</div>
+                <div class="scene-title">Scene 1</div>
+            </a>
+            <a href="/scene2.html" class="scene-card">
+                <div class="scene-number">2</div>
+                <div class="scene-title">Scene 2</div>
+            </a>
+            <a href="/scene3.html" class="scene-card">
+                <div class="scene-number">3</div>
+                <div class="scene-title">Scene 3</div>
+            </a>
+            <a href="/scene4.html" class="scene-card">
+                <div class="scene-number">4</div>
+                <div class="scene-title">Scene 4</div>
+            </a>
+            <a href="/scene5.html" class="scene-card">
+                <div class="scene-number">5</div>
+                <div class="scene-title">Scene 5</div>
+            </a>
+            <a href="/scene6.html" class="scene-card">
+                <div class="scene-number">6</div>
+                <div class="scene-title">Scene 6</div>
+            </a>
+        </div>
+
+        <div class="instructions">
+            <h3>📋 사용 방법</h3>
+            <ol>
+                <li>iPhone으로 NFC 태그에 가까이 대세요</li>
+                <li>자동으로 해당 Scene 페이지가 열립니다</li>
+                <li>성우 음성을 듣고 따라 말해보세요</li>
+                <li>녹음 버튼으로 내 목소리를 저장하세요</li>
+                <li>반복 학습으로 실력을 향상시키세요!</li>
+            </ol>
+        </div>
+
+        <div class="nfc-info">
+            <h3>🏷️ NFC 태그 정보</h3>
+            <p>
+                각 NFC 태그는 해당 Scene 페이지 URL로 설정되어 있습니다.<br>
+                iPhone의 NFC 기능이 활성화되어 있는지 확인해주세요.
+            </p>
+        </div>
+
+        <div class="install-prompt" id="installPrompt">
+            <h3>📱 앱으로 설치</h3>
+            <p>홈 화면에 추가하여 더 편리하게 사용하세요!</p>
+            <button class="install-btn" id="installBtn">설치하기</button>
+        </div>
+    </div>
+
+    <script>
+        // PWA 설치 프롬프트
+        let deferredPrompt;
+        const installPrompt = document.getElementById('installPrompt');
+        const installBtn = document.getElementById('installBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            console.log('beforeinstallprompt fired');
+            e.preventDefault();
+            deferredPrompt = e;
+            installPrompt.style.display = 'block';
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User response to the install prompt: ${outcome}`);
+                deferredPrompt = null;
+                installPrompt.style.display = 'none';
+            }
+        });
+
+        window.addEventListener('appinstalled', (evt) => {
+            console.log('App was installed.');
+            installPrompt.style.display = 'none';
+        });
+
+        // Service Worker 등록
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('SW registered: ', registration);
+                        
+                        // 업데이트 확인
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    console.log('New content is available; please refresh.');
+                                    // 사용자에게 새로고침 알림 (선택사항)
+                                    if (confirm('새로운 업데이트가 있습니다. 새로고침하시겠습니까?')) {
+                                        window.location.reload();
+                                    }
+                                }
+                            });
+                        });
+                    })
+                    .catch((registrationError) => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+
+        // 각 씬 카드 클릭 시 애니메이션
+        document.querySelectorAll('.scene-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // 클릭 애니메이션
+                card.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    card.style.transform = 'translateY(-3px)';
+                    // 페이지 이동
+                    window.location.href = card.href;
+                }, 150);
+            });
+        });
+
+        // 디바이스 정보 로깅 (디버깅용)
+        console.log('User Agent:', navigator.userAgent);
+        console.log('Platform:', navigator.platform);
+        console.log('Language:', navigator.language);
+        console.log('Online:', navigator.onLine);
+        
+        // NFC 지원 확인
+        if ('NDEFReader' in window) {
+            console.log('NFC is supported');
+        } else {
+            console.log('NFC is not supported');
+        }
+
+        // 화면 방향 변경 처리
+        window.addEventListener('orientationchange', () => {
+            setTimeout(() => {
+                window.scrollTo(0, 0);
+            }, 100);
+        });
+
+        // 터치 제스처 최적화
+        document.addEventListener('touchstart', function() {}, { passive: true });
+        
+        // 뒤로 가기 버튼 처리
+        window.addEventListener('popstate', (event) => {
+            console.log('Back button pressed');
+        });
+    </script>
+</body>
+</html>
